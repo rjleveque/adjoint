@@ -1,11 +1,13 @@
 
+from __future__ import print_function
+
 from pylab import *
 import adjoint_tools as A
 
 X,T,qxt = A.read_data('forward/_output')
 Xa,Ta,qa = A.read_data('adjoint/_output',adjoint=True)
 
-print "Read qxt and qa"
+print("Read qxt and qa")
 
 if any(abs(T-Ta)>1e-12) or any(abs(X-Xa)>1e-12):
     raise Exception("*** X and Xa or T and Ta do not match")
@@ -31,7 +33,9 @@ plot([0,0],[0,tmax],'k--')
 title("Adjoint Solution", fontsize=size)
 tick_params(axis='y', labelleft='off')
 xticks([-4,-2,0,2], fontsize=size)
-savefig('acoustics1d_norms.png')
+fname = 'acoustics1d_norms.png'
+savefig(fname)
+print('Created ',fname)
 
 # Generating overlayed image
 figure(1,(10,8))
@@ -54,4 +58,6 @@ plot([0,0],[0,tmax],'k--')
 title("Inner Product", fontsize=size)
 xticks([-4,-2,0,2], fontsize=size)
 tick_params(axis='y', labelleft='off')
-savefig('acoustics1d_innerprod.png')
+fname = 'acoustics1d_innerprod.png'
+savefig(fname)
+print('Created ',fname)

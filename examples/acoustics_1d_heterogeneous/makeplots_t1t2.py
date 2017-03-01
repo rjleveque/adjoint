@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 from pylab import *
 import adjoint_tools as A
@@ -6,7 +7,7 @@ from clawpack.clawutil.data import ClawData
 
 X,T,qxt = A.read_data('forward/_output')
 Xa,Ta,qa = A.read_data('adjoint/_output',adjoint=True)
-print "Read qxt and qa"
+print("Read qxt and qa")
 
 if any(abs(T-Ta)>1e-12) or any(abs(X-Xa)>1e-12):
     raise Exception("*** X and Xa or T and Ta do not match")
@@ -48,8 +49,8 @@ for nt in range(len(t)-1,-1,-1):
     # shift qa2 downward in time:
     qa2 = zeros(qa.shape)
     qa2[:nt,:,:] = qa[(num_t-nt):,:,:]
-    #print '+++ shifted row %s and above to first %s' % (num_t-nt,nt)
-    #print '+++ t[nt] = %g' % t[nt]
+    #print('+++ shifted row %s and above to first %s' % (num_t-nt,nt))
+    #print('+++ t[nt] = %g' % t[nt])
     if t[nt] <= t1: break
 
 size = 26
@@ -70,4 +71,6 @@ plot([x1,x2,x2,x1,x1],[t1,t1,t2,t2,t1],'b-')
 xticks([-4,-2,0,2], fontsize=size)
 tick_params(axis='y', labelleft='off')
 
-savefig('acoustics1d_timewindow.png')
+fname = 'acoustics1d_timewindow.png'
+savefig(fname)
+print('Created ',fname)
