@@ -1,3 +1,4 @@
+
 # Makefile for Clawpack code in this directory.
 # This version only sets the local files and frequently changed
 # options, and then includes the standard makefile pointed to by CLAWMAKE.
@@ -52,7 +53,6 @@ MODULES = \
   $(ADJLIB)/shallow/adjoint_module.f90 
 
 SOURCES = \
-  setprob.f90 \
   $(ADJLIB)/shallow/amr2_reload.f90 \
   $(ADJLIB)/shallow/interp_adjoint.f \
   $(ADJLIB)/shallow/reload.f \
