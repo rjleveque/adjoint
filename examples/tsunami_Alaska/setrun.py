@@ -20,6 +20,7 @@ except:
 
 # Scratch directory for storing topo and dtopo files:
 scratch_dir = os.path.join(CLAW, 'adjoint', 'scratch')
+scratch_dir = os.path.abspath('../../scratch')
 
 #------------------------------
 def setrun(claw_pkg='geoclaw'):

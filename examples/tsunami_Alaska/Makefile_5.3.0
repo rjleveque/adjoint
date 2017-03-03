@@ -34,7 +34,7 @@ FFLAGS = -O2 -fopenmp
 
 AMRLIB = $(CLAW)/amrclaw/src/2d
 GEOLIB = $(CLAW)/geoclaw/src/2d/shallow
-ADJLIB = $(CLAW)/adjoint/src
+ADJLIB = ../../../adjoint/src
 
 MODULES = \
  $(GEOLIB)/utility_module.f90 \
