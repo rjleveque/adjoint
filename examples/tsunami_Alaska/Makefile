@@ -48,8 +48,16 @@ EXCLUDE_SOURCES = \
 
 
 MODULES = \
+  $(ADJLIB)/shallow/amr_reload_module.f90 \
+  $(ADJLIB)/shallow/adjoint_module.f90 
 
 SOURCES = \
+  setprob.f90 \
+  $(ADJLIB)/shallow/amr2_reload.f90 \
+  $(ADJLIB)/shallow/interp_adjoint.f \
+  $(ADJLIB)/shallow/reload.f \
+  $(ADJLIB)/shallow/valout.f \
+  $(ADJLIB)/shallow/flag2refine2.f90 \
   $(CLAW)/riemann/src/rpn2_geoclaw.f \
   $(CLAW)/riemann/src/rpt2_geoclaw.f \
   $(CLAW)/riemann/src/geoclaw_riemann_utils.f \
