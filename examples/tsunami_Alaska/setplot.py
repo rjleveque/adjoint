@@ -275,17 +275,18 @@ def setplot(plotdata):
     # Uncomment these lines if you want to compare the adjoint-flagging
     # run with either of the two surface-flagging runs
     
-    # Plot q[0] from previous run as red line:
-    plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
-    plotitem.plot_var = 3
-    plotitem.plotstyle = 'r-'
-    plotitem.outdir = '../_output_sflag_14'
-    
-    # Plot q[0] from previous run as red line:
-    plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
-    plotitem.plot_var = 3
-    plotitem.plotstyle = 'g-'
-    plotitem.outdir = '../_output_sflag_09'
+    if 0:
+        # Plot q[0] from previous run as red line:
+        plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
+        plotitem.plot_var = 3
+        plotitem.plotstyle = 'r-'
+        plotitem.outdir = '../_output_sflag_14'
+        
+        # Plot q[0] from previous run as red line:
+        plotitem = plotaxes.new_plotitem(plot_type='1d_plot')
+        plotitem.plot_var = 3
+        plotitem.plotstyle = 'g-'
+        plotitem.outdir = '../_output_sflag_09'
 
     #-----------------------------------------
     
