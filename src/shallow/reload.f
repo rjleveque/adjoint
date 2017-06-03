@@ -68,20 +68,6 @@ c     # remainder of file we do not need, including new tvoll, etc.
 
       close(rstunit)
 
-c     write(6,*) '+++',adjoints(k)%lenmax,adjoints(k)%lendim,
-c    .    adjoints(k)%isize
-c     write(6,*) '+++',adjoints(k)%hxposs(1),adjoints(k)%hyposs(1),
-c    .       adjoints(k)%possk(1),adjoints(k)%icheck
-c     write(6,*) '+++ lenf... ', adjoints(k)%lenf
-c     write(6,*) '+++ iorder, mxnest... ',adjoints(k)%iorder,
-c    1       adjoints(k)%mxnest
-c     write(6,*) '+++ intrat...', adjoints(k)%intratx(1),
-c    2       adjoints(k)%intraty(1),
-c    2       adjoints(k)%kratio(1)
-c     write(6,*) '+++ numgrids...',adjoints(k)%numgrids(1),
-c    3       adjoints(k)%kcheck,adjoints(k)%nsteps,
-c    3       adjoints(k)%time, adjoints(k)%matlabu
-
       write(outunit,100) adjoints(k)%nsteps,adjoints(k)%time
       write(6,100) adjoints(k)%nsteps,adjoints(k)%time
  100  format(/,' Data comes from calculating over ',i5,' steps',
