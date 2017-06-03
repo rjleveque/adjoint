@@ -13,7 +13,7 @@ module amr_reload_module
     ! :::::   data structure info.
     ! ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     integer, parameter :: rsize = 5
-    integer, parameter :: nsize = 17
+    integer, parameter :: nsize = 19
 
     !  :::::::   integer part of node descriptor
     integer, parameter :: levelptr  = 1
