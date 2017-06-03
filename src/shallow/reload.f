@@ -18,6 +18,8 @@ c
       character(len=*), intent(in) :: adjointfile
       logical foundFile, initial
 
+      integer :: ndfree_bnd
+
 c     ! Checking to see if file exists
       write(6,*) 'Attempting to reload data '
       write(6,*) '  checkpoint file: ',trim(adjointfile)
@@ -47,7 +49,7 @@ c     ! Starting the bulk of the reading
      1       adjoints(k)%lstart,adjoints(k)%newstl,
      1       adjoints(k)%listsp, adjoints(k)%tol,
      1       adjoints(k)%ibuff,adjoints(k)%mstart,
-     1       adjoints(k)%ndfree,adjoints(k)%lfine,
+     1       adjoints(k)%ndfree,ndfree_bnd,adjoints(k)%lfine,
      1       adjoints(k)%iorder,adjoints(k)%mxnest,
      2       adjoints(k)%intratx,adjoints(k)%intraty,
      2       adjoints(k)%kratio,adjoints(k)%iregsz,
@@ -62,7 +64,23 @@ c     ! Starting the bulk of the reading
      1              adjoints(k)%lentot,adjoints(k)%tmass0,
      1              adjoints(k)%cflmax
 
+c     # remainder of file we do not need, including new tvoll, etc.
+
       close(rstunit)
+
+c     write(6,*) '+++',adjoints(k)%lenmax,adjoints(k)%lendim,
+c    .    adjoints(k)%isize
+c     write(6,*) '+++',adjoints(k)%hxposs(1),adjoints(k)%hyposs(1),
+c    .       adjoints(k)%possk(1),adjoints(k)%icheck
+c     write(6,*) '+++ lenf... ', adjoints(k)%lenf
+c     write(6,*) '+++ iorder, mxnest... ',adjoints(k)%iorder,
+c    1       adjoints(k)%mxnest
+c     write(6,*) '+++ intrat...', adjoints(k)%intratx(1),
+c    2       adjoints(k)%intraty(1),
+c    2       adjoints(k)%kratio(1)
+c     write(6,*) '+++ numgrids...',adjoints(k)%numgrids(1),
+c    3       adjoints(k)%kcheck,adjoints(k)%nsteps,
+c    3       adjoints(k)%time, adjoints(k)%matlabu
 
       write(outunit,100) adjoints(k)%nsteps,adjoints(k)%time
       write(6,100) adjoints(k)%nsteps,adjoints(k)%time
