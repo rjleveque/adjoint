@@ -83,7 +83,7 @@ contains
                 call reload(adj_files(k),k)
 
                 ! Reverse times
-                adjoints(k)%time = adj_times(k)
+                !adjoints(k)%time = adj_times(k)
             50 continue
 
         else
@@ -121,9 +121,13 @@ contains
 
         aloop: do r=1, totnum_adjoints
 
-        if (t < adjoints(r)%time .and. &
-            (t +(trange_final - trange_start))>= adjoints(r-1)%time) then
+        !if (t < adjoints(r)%time .and. &
+        !    (t +(trange_final - trange_start))>= adjoints(r-1)%time) then
+        if ((trange_start - t <= adjoints(r)%time) .and. &
+            (adjoints(r)%time <= trange_final - t)) then
 
+!           write(57,571) t,r,adjoints(r)%time
+!571        format(f10.1,i5,f10.1)
             call interp_adjoint(1, adjoints(r)%lfine, nvar, &
                 naux, x_c,y_c,q_interp, r)
 
@@ -149,7 +153,8 @@ contains
             endif
 
             q_innerprod2 = 0.d0
-            if (r .ne. 1) then
+            !if (r .ne. 1) then
+            if (.false.) then
                 call interp_adjoint(1, adjoints(r-1)%lfine, &
                     nvar, naux, x_c,y_c, q_interp, r-1)
 
