@@ -4,7 +4,10 @@
     Call functions with makeplots==True to create plots of topo, slip, and dtopo.
 """
 
-import os,sys
+from __future__ import absolute_import
+from __future__ import print_function
+import os
+
 import clawpack.clawutil.data
 from clawpack.geoclaw import topotools
 from numpy import *
@@ -26,12 +29,13 @@ def get_topo(makeplots=False):
     """
     from clawpack.geoclaw import topotools
     topo_fname = 'etopo1min170E124W40N61N.asc'
-    url = 'http://students.washington.edu/bndavis/misc/topo/' + topo_fname
-    clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir,
+    topo_url = 'http://depts.washington.edu/clawpack/geoclaw/topo/etopo/'
+    url = topo_url + topo_fname
+    clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir, 
             file_name=topo_fname, verbose=True)
         
     topo_fname = 'etopo4min120E110W0N62N.asc'
-    url = 'http://students.washington.edu/bndavis/misc/topo/' + topo_fname
+    url = topo_url + topo_fname
     clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir,
             file_name=topo_fname, verbose=True)
                                            

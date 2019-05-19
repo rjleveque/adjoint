@@ -4,6 +4,8 @@ Download topo and dtopo files needed for this example.
 Call functions with makeplots==True to create plots of topo, slip, and dtopo.
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 
 import clawpack.clawutil.data
@@ -16,28 +18,31 @@ except:
 # Scratch directory for storing topo and dtopo files:
 scratch_dir = os.path.join(CLAW, 'geoclaw', 'scratch')
 
+
 def get_topo(makeplots=False):
     """
     Retrieve the topo file from online.
     """
     from clawpack.geoclaw import topotools
     topo_fname = 'etopo1min170E124W40N61N.asc'
-    url = 'http://students.washington.edu/bndavis/misc/topo/' + topo_fname
+    topo_url = 'http://depts.washington.edu/clawpack/geoclaw/topo/etopo/'
+    url = topo_url + topo_fname
     clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir, 
             file_name=topo_fname, verbose=True)
             
     topo_fname = 'etopo4min120E110W0N62N.asc'
-    url = 'http://students.washington.edu/bndavis/misc/topo/' + topo_fname
+    url = topo_url + topo_fname
     clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir,
             file_name=topo_fname, verbose=True)
             
+    topo_url = 'http://depts.washington.edu/clawpack/geoclaw/topo/CC/'
     topo_fname = 'cc-1sec-c.asc'
-    url = 'http://students.washington.edu/bndavis/misc/topo/' + topo_fname
+    url = topo_url + topo_fname
     clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir,
             file_name=topo_fname, verbose=True)
             
     topo_fname = 'cc-1_3sec-c_pierless.asc'
-    url = 'http://students.washington.edu/bndavis/misc/topo/' + topo_fname
+    url = topo_url + topo_fname
     clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir,
             file_name=topo_fname, verbose=True)
 
@@ -47,7 +52,7 @@ def get_topo(makeplots=False):
         topo.plot()
         fname = os.path.splitext(topo_fname)[0] + '.png'
         plt.savefig(fname)
-        print "Created ",fname
+        print("Created ",fname)
     
 def make_dtopo(makeplots=False):
     """
@@ -58,7 +63,8 @@ def make_dtopo(makeplots=False):
     import numpy
 
     dtopo_fname = 'AASZ04v2.tt3'
-    url = 'http://students.washington.edu/bndavis/misc/dtopo/alaska/' + dtopo_fname
+    dtopo_url = 'http://depts.washington.edu/clawpack/geoclaw/dtopo/AASZ/'
+    url = dtopo_url + dtopo_fname
     clawpack.clawutil.data.get_remote_file(url, output_dir=scratch_dir,
                                            file_name=dtopo_fname, verbose=True)
 
@@ -66,7 +72,7 @@ def make_dtopo(makeplots=False):
         from matplotlib import pyplot as plt
         if fault.dtopo is None:
             # read in the pre-existing file:
-            print "Reading in dtopo file..."
+            print("Reading in dtopo file...")
             dtopo = dtopotools.DTopography()
             dtopo.read(dtopo_fname, dtopo_type=3)
             x = dtopo.x
@@ -80,7 +86,7 @@ def make_dtopo(makeplots=False):
         dtopo.plot_dz_colors(1.,axes=ax2)
         fname = os.path.splitext(dtopo_fname)[0] + '.png'
         plt.savefig(fname)
-        print "Created ",fname
+        print("Created ",fname)
 
 
 if __name__=='__main__':
