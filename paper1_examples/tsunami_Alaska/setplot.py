@@ -11,6 +11,8 @@ The main difference is that the inner product plot is produced.
     
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 from clawpack.geoclaw import topotools
 import pylab
 import glob
@@ -37,9 +39,9 @@ def setplot(plotdata):
         for line in tsudata:
             if 'sea_level' in line:
                 sea_level = float(line.split()[0])
-                print "sea_level = ",sea_level
+                print("sea_level = ",sea_level)
     except:
-        print "Could not read sea_level, setting to 0."
+        print("Could not read sea_level, setting to 0.")
         sea_level = 0.
 
     clim_ocean = 0.3
@@ -118,7 +120,7 @@ def setplot(plotdata):
     plotitem.add_colorbar = False
     plotitem.colorbar_shrink = 0.7
     plotitem.amr_celledges_show = [0,0,0]
-    plotitem.amr_patchedges_show = [1]
+    plotitem.amr_patchedges_show = [0]
 
     # Land
     plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
@@ -163,6 +165,7 @@ def setplot(plotdata):
     plotaxes.title = 'Inner Product'
     plotaxes.axescmd = 'axes([0.45,0.13,0.6,0.75])'
     plotaxes.scaled = True
+
     def aa_innerprod(current_data):
         from pylab import ticklabel_format, xticks, gca, cos, pi, yticks
         plotcc(current_data)
@@ -173,17 +176,25 @@ def setplot(plotdata):
         a = gca()
         a.set_aspect(1./cos(41.75*pi/180.))
     plotaxes.afteraxes = aa_innerprod
+
+    def masked_inner_product(current_data):
+        from numpy import ma
+        aux = current_data.aux
+        tol = 1e-15
+        soln = ma.masked_where(aux[3,:,:] < tol, aux[3,:,:])
+        return soln
+
     
     # Water
     plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')
-    plotitem.plot_var = 4
+    plotitem.plot_var = masked_inner_product
     plotitem.imshow_cmap = colormaps.white_red
     plotitem.imshow_cmin = 0.0
     plotitem.imshow_cmax = 0.05
     plotitem.add_colorbar = False
     plotitem.amr_celledges_show = [0,0,0]
     plotitem.amr_patchedges_show = [0]
-    plotitem.amr_data_show = [1,0,0,0]
+    plotitem.amr_data_show = [1,1,0,0]
     
     # Land
     plotitem = plotaxes.new_plotitem(plot_type='2d_imshow')

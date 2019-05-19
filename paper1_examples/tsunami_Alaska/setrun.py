@@ -4,8 +4,13 @@ Module to set up run time parameters for Clawpack -- AMRClaw code.
 The values set in the function setrun are then written out to data files
 that will be read in by the Fortran code.
 
-""" 
 
+For AMR based on adjoint flagging. 
+
+"""
+
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import numpy as np
 
@@ -35,7 +40,8 @@ except:
     raise Exception("*** Must first set CLAW enviornment variable")
 
 # Scratch directory for storing topo and dtopo files:
-scratch_dir = os.path.join(CLAW, 'geoclaw', 'scratch')
+#scratch_dir = os.path.join(CLAW, 'geoclaw', 'scratch')
+scratch_dir = os.path.join(CLAW, 'adjoint', 'scratch')
 
 #------------------------------
 def setrun(claw_pkg='geoclaw'):
@@ -102,7 +108,9 @@ def setrun(claw_pkg='geoclaw'):
     clawdata.num_eqn = 3
 
     # Number of auxiliary variables in the aux array (initialized in setaux)
-    # see setadjoint
+    # Note: as required for original problem - modified below for adjoint
+    clawdata.num_aux = 3
+
     
     # Index of aux array corresponding to capacity function, if there is one:
     clawdata.capa_index = 2
@@ -157,8 +165,8 @@ def setrun(claw_pkg='geoclaw'):
     clawdata.output_format = 'binary'      # 'ascii', 'binary', 'netcdf'
 
     clawdata.output_q_components = 'all'   # could be list such as [True,True]
-    clawdata.output_aux_components = 'none'  # could be list
-    clawdata.output_aux_onlyonce = True    # output aux arrays only at t0
+    clawdata.output_aux_components = 'all'  # including adjoint inner product
+    clawdata.output_aux_onlyonce = False    # False to output each frame
     
 
     # ---------------------------------------------------
@@ -314,17 +322,19 @@ def setrun(claw_pkg='geoclaw'):
     # Specify type of each aux variable in amrdata.auxtype.
     # This must be a list of length num_aux, each element of which is one of:
     #   'center',  'capacity', 'xleft', or 'yleft'  (see documentation).
+
+    # Note: as required for original problem - modified below for adjoint
+    amrdata.aux_type = ['center','capacity','yleft']
+
+    # set tolerances appropriate for adjoint flagging:
     
-    # need 4 values, set in setadjoint
-
-
     # Flag for refinement based on Richardson error estimater:
     amrdata.flag_richardson = False    # use Richardson?
     amrdata.flag_richardson_tol = 1.0  # Richardson tolerance
     
     # Flag for refinement using routine flag2refine:
-    amrdata.flag2refine = True      # use this?
-    # see setadjoint to set tolerance for adjoint flagging
+    amrdata.flag2refine = True
+    rundata.amrdata.flag2refine_tol = adjoint_flag_tolerance
 
     # steps to take on each level L between regriddings of level L+1:
     amrdata.regrid_interval = 3       
@@ -359,12 +369,28 @@ def setrun(claw_pkg='geoclaw'):
     regions.append([5, 5, t_shelf, 1e9, 235.5,235.83,41.6,41.8]) #only harbor 
     regions.append([5, 6, t_harbor, 1e9, 235.78,235.84,41.735,41.775]) #only harbor
     
+
     #------------------------------------------------------------------
     # Adjoint specific data:
     #------------------------------------------------------------------
-    # Do this last since it resets some parameters such as num_aux
-    # as needed for adjoint flagging.
-    rundata = setadjoint(rundata)
+    # Also need to set flagging method and appropriate tolerances above
+
+    adjointdata = rundata.adjointdata
+    adjointdata.use_adjoint = True
+
+    # location of adjoint solution, must first be created:
+    adjointdata.adjoint_outdir = adjoint_output
+
+    # time period of interest:
+    adjointdata.t1 = t1
+    adjointdata.t2 = t2
+
+    if adjointdata.use_adjoint:
+        # need an additional aux variable for inner product:
+        rundata.amrdata.aux_type.append('center')
+        rundata.clawdata.num_aux = len(rundata.amrdata.aux_type)
+        adjointdata.innerprod_index = len(rundata.amrdata.aux_type)
+
 
     #  ----- For developers -----
     # Toggle debugging print statements:
@@ -395,7 +421,7 @@ def setgeo(rundata):
     try:
         geo_data = rundata.geo_data
     except:
-        print "*** Error, this rundata has no geo_data attribute"
+        print("*** Error, this rundata has no geo_data attribute")
         raise AttributeError("Missing geo_data attribute")
 
     # == Physics ==
@@ -469,51 +495,6 @@ def setgeo(rundata):
     # end of function setgeo
     # ----------------------
 
-#-------------------
-def setadjoint(rundata):
-#-------------------
-
-    """
-    Set parameters used for adjoint flagging.
-    Also reads in all of the checkpointed Adjoint files.
-    """
-    
-    import glob
-    
-    # Set these parameters at top of this file:
-    # adjoint_flag_tolerance, t1, t2, adjoint_output
-    # Then you don't need to modify this function...
-    
-    rundata.amrdata.flag2refine = True  # for adjoint flagging
-    rundata.amrdata.flag2refine_tol = adjoint_flag_tolerance
-    
-    rundata.clawdata.num_aux = 4
-    rundata.amrdata.aux_type = ['center', 'capacity', 'yleft', 'center']
-    
-    adjointdata = rundata.new_UserData(name='adjointdata',fname='adjoint.data')
-    adjointdata.add_param('adjoint_output',adjoint_output,'adjoint_output')
-    adjointdata.add_param('t1',t1,'t1, start time of interest')
-    adjointdata.add_param('t2',t2,'t2, final time of interest')
-    
-    files = glob.glob(os.path.join(adjoint_output,"fort.b*"))
-    files.sort()
-    
-    if (len(files) == 0):
-        print("No binary files found for adjoint output!")
-    
-    adjointdata.add_param('numadjoints', len(files), 'Number of adjoint output files.')
-    adjointdata.add_param('innerprod_index', 4, 'Index for innerproduct data in aux array.')
-    
-    counter = 1
-    for fname in files:
-        f = open(fname)
-        time = f.readline().split()[-1]
-        adjointdata.add_param('file' + str(counter), fname, 'Binary file' + str(counter))
-        counter = counter + 1
-
-    return rundata
-    # end of function setadjoint
-    # ----------------------
 
 if __name__ == '__main__':
     # Set up run-time parameters and write all data files.

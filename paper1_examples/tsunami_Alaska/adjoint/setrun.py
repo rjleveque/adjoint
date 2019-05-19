@@ -6,6 +6,8 @@ that will be read in by the Fortran code.
 
 """ 
 
+from __future__ import absolute_import
+from __future__ import print_function
 import os
 import numpy as np
 
@@ -198,7 +200,7 @@ def setrun(claw_pkg='geoclaw'):
     
     
     # Number of waves in the Riemann solution:
-    clawdata.num_waves = 3
+    clawdata.num_waves = 2   # only 2 in linearized adjoint
     
     # List of limiters to use for each wave family:  
     # Required:  len(limiter) == num_waves
@@ -206,11 +208,11 @@ def setrun(claw_pkg='geoclaw'):
     #   0 or 'none'     ==> no limiter (Lax-Wendroff)
     #   1 or 'minmod'   ==> minmod
     #   2 or 'superbee' ==> superbee
-    #   3 or 'vanleer'  ==> van Leer
-    #   4 or 'mc'       ==> MC limiter
-    clawdata.limiter = ['vanleer', 'vanleer', 'vanleer']
-    
-    clawdata.use_fwaves = True    # True ==> use f-wave version of algorithms
+    #   3 or 'mc'       ==> MC limiter
+    #   4 or 'vanleer'  ==> van Leer
+    clawdata.limiter = ['mc', 'mc']
+
+    clawdata.use_fwaves = False    # True ==> use f-wave version of algorithms
     
     # Source terms splitting:
     #   src_split == 0 or 'none'    ==> no source term (src routine never called)
@@ -353,7 +355,7 @@ def setgeo(rundata):
     try:
         geo_data = rundata.geo_data
     except:
-        print "*** Error, this rundata has no geo_data attribute"
+        print("*** Error, this rundata has no geo_data attribute")
         raise AttributeError("Missing geo_data attribute")
 
     # == Physics ==
